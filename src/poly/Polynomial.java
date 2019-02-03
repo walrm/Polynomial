@@ -3,8 +3,6 @@ package poly;
 import java.io.IOException;
 import java.util.Scanner;
 
-//TESTING GITHUB!
-
 /**
  * This class implements evaluate, add and multiply for polynomials.
  * 
@@ -171,7 +169,13 @@ public class Polynomial {
 		/** COMPLETE THIS METHOD **/
 		// FOLLOWING LINE IS A PLACEHOLDER TO MAKE THIS METHOD COMPILE
 		// CHANGE IT AS NEEDED FOR YOUR IMPLEMENTATION
-		return 0;
+		float sum = 0;
+		Node ptr = poly;
+		while(ptr != null) {
+			sum += ptr.term.coeff * Math.pow(x,ptr.term.degree);
+			ptr = ptr.next;
+		}
+		return sum;
 	}
 
 	/**
