@@ -52,15 +52,30 @@ public class Polynomial {
 		return poly;
 	}
 
-	private static void addEnd(float coeff, int degree, Node n) {
-		Node temp = n;
-		while (temp != null) {
-			if (temp.next == null) {
-				temp.next = new Node(coeff, degree, null);
-				break;
+	private static Node addEnd(float coeff, int degree, Node n) {
+		//Set to Front of Linked List if empty
+		if (n == null) {
+			n = new Node(coeff, degree, null);
+			
+		//Traverse and add new Node to end of linked list
+		}else {
+			for(Node ptr=n; ptr!=null; ptr = ptr.next) {
+				
+				//At end of linked list, create new node 
+				if(ptr.next == null) {
+					ptr.next = new Node(coeff, degree, null);
+					break;
+					
+				//FOR MULTIPLY: if the next term has greater degree, place in between
+				}else if(degree<ptr.next.term.degree) {
+					ptr.next = new Node(coeff, degree, ptr.next);
+					break;
+				}
 			}
-			temp = temp.next;
 		}
+		
+		//return new, changed n value
+		return n;
 	}
 
 	/**
@@ -89,23 +104,20 @@ public class Polynomial {
 		//Return neither if both null or one polynomial if the other is null
 		if(ptr1 == null && ptr2 == null) { 
 			sum = null;
-		} else if (ptr1 == null) {
-			sum = poly2;
-		} else if (ptr2 == null) {
-			sum = poly1;
-		} else {
+		} 
+		else {
 			
-			//iterate through both polynomials at the same time
+			//Traverse through both polynomials at the same time
 			while (ptr1 != null || ptr2 != null) { 
 				
 				//Adding the rest of polynomial one when polynomial two is already traversed through
 				if (ptr2 == null && ptr1 != null) {
-					addEnd(ptr1.term.coeff, ptr1.term.degree, sum);
+					sum = addEnd(ptr1.term.coeff, ptr1.term.degree, sum);
 					ptr1 = ptr1.next;
 					
 				//Adding the rest of polynomial two when polynomial one is already traversed through
 				} else if (ptr2 != null && ptr1 == null) {
-					addEnd(ptr2.term.coeff, ptr2.term.degree, sum);
+					sum = addEnd(ptr2.term.coeff, ptr2.term.degree, sum);
 					ptr2 = ptr2.next;
 					
 				//Adding coefficients when the the degrees are equal
@@ -113,14 +125,11 @@ public class Polynomial {
 					
 					//Do not add to sum Linked List if the addition of sums equals zero 
 					if (ptr1.term.coeff + ptr2.term.coeff == 0) {
-						
-					//Add summation of coefficients to first of sum linked list if sum is empty
-					} else if (sum == null) {
-						sum = new Node(ptr1.term.coeff + ptr2.term.coeff, ptr1.term.degree, null);
+					}
 					
 					//Add summation of coefficients to end of sum linked list 
-					} else {
-						addEnd(ptr1.term.coeff + ptr2.term.coeff, ptr1.term.degree, sum);
+					else {
+						sum = addEnd(ptr1.term.coeff + ptr2.term.coeff, ptr1.term.degree, sum);
 					}
 					
 					//Traversing through the two polynomials at the same time
@@ -128,12 +137,12 @@ public class Polynomial {
 					ptr2 = ptr2.next;
 					
 				//Add lower degree term to end of sum linked list and iterate to next Node
-				//of the added polynomial term.
+				//of the added polynomial linked list.
 				} else if (ptr1.term.degree > ptr2.term.degree) {
-					addEnd(ptr2.term.coeff, ptr2.term.degree, sum);
+					sum = addEnd(ptr2.term.coeff, ptr2.term.degree, sum);
 					ptr2 = ptr2.next;
 				} else if (ptr2.term.degree > ptr1.term.degree) {
-					addEnd(ptr1.term.coeff, ptr1.term.degree, sum);
+					sum = addEnd(ptr1.term.coeff, ptr1.term.degree, sum);
 					ptr1 = ptr1.next;
 				}
 			}
@@ -155,7 +164,51 @@ public class Polynomial {
 		/** COMPLETE THIS METHOD **/
 		// FOLLOWING LINE IS A PLACEHOLDER TO MAKE THIS METHOD COMPILE
 		// CHANGE IT AS NEEDED FOR YOUR IMPLEMENTATION
-		return null;
+		
+		//Result linked list that represent product (answer) 
+		Node product = null;
+		
+		//Temporary linked list to run through product to match up equivalent degrees.
+		Node temp = null;
+		
+		//Multiplied out temporary term and degree
+		float tempC;
+		int tempD;
+		
+		//boolean to tell whether to add to linked list or modify existing coeff value
+		boolean equal = false;
+		
+		//Return 0 if either polynomial is null
+		if(poly1 == null || poly2 == null) {
+			return null;
+		}
+		
+		//Nested for loop to multiply each term with each other
+		for(Node ptr1 = poly1; ptr1!=null; ptr1= ptr1.next) {
+			for(Node ptr2 = poly2; ptr2!=null; ptr2= ptr2.next) {
+				equal = false;
+				temp = product;
+				
+				//Multiplying each term with each other
+				tempC = ptr1.term.coeff*ptr2.term.coeff;
+				tempD = ptr1.term.degree+ptr2.term.degree;
+				
+				//Run through product to add coefficients of same degree
+				while(temp!=null) {
+					if(tempD == temp.term.degree) {
+						temp.term.coeff += tempC;
+						equal = true;
+					}
+					temp = temp.next;
+				}
+				
+				//If no equivalent degree exists, add to the end of product instead
+				if (!equal && tempC != 0) {
+					product = addEnd(tempC, tempD, product);
+				}
+			}
+		}
+		return product;
 	}
 
 	/**
