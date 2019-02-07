@@ -166,6 +166,7 @@ public class Polynomial {
 		
 		//Temporary linked list to run through product to match up equivalent degrees.
 		Node temp = null;
+		Node prev = null;
 		
 		//Product of term and degree 
 		float tempC;
@@ -184,6 +185,7 @@ public class Polynomial {
 			for(Node ptr2 = poly2; ptr2!=null; ptr2= ptr2.next) {
 				equal = false;
 				temp = product;
+				prev = null;
 				
 				//Multiplying each term with each other
 				tempC = ptr1.term.coeff*ptr2.term.coeff;
@@ -193,8 +195,12 @@ public class Polynomial {
 				while(temp!=null) {
 					if(tempD == temp.term.degree) {
 						temp.term.coeff += tempC;
+						if (temp.term.coeff == 0 ) {
+							prev.next = temp.next;
+						}
 						equal = true;
 					}
+					prev = temp;
 					temp = temp.next;
 				}
 				
