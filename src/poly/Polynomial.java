@@ -124,11 +124,7 @@ public class Polynomial {
 				} else if (ptr1.term.degree == ptr2.term.degree) {
 					
 					//Do not add to sum Linked List if the addition of sums equals zero 
-					if (ptr1.term.coeff + ptr2.term.coeff == 0) {
-					}
-					
-					//Add summation of coefficients to end of sum linked list 
-					else {
+					if (ptr1.term.coeff + ptr2.term.coeff !=0 ){
 						sum = addEnd(ptr1.term.coeff + ptr2.term.coeff, ptr1.term.degree, sum);
 					}
 					
@@ -171,7 +167,7 @@ public class Polynomial {
 		//Temporary linked list to run through product to match up equivalent degrees.
 		Node temp = null;
 		
-		//Multiplied out temporary term and degree
+		//Product of term and degree 
 		float tempC;
 		int tempD;
 		
